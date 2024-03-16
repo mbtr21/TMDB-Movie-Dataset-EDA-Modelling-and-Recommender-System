@@ -31,7 +31,7 @@ class PreProcessor:
         self.data_frame.replace(value, method=method, regex=regex, inplace=True)
 
     def merge(self, other, left_on, right_on,how):
-        self.data_frame = pd.merge(left=self.data_frame, right=other,left_on=left_on, right_on=right_on, how=how)
+        self.data_frame = pd.merge(left=self.data_frame, right=other, left_on=left_on, right_on=right_on, how=how)
 
     def group_by(self, group_column, columns_agg):
         return self.data_frame.groupby(group_column).agg(columns_agg)
