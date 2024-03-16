@@ -36,7 +36,8 @@ class PreProcessor:
     def group_by(self, group_column, columns_agg):
         return self.data_frame.groupby(group_column).agg(columns_agg)
 
-
+    def rename(self, columns):
+        self.data_frame = self.data_frame.rename(columns=columns)
 
     def normalize(self, columns=None):
         if columns is not None:
