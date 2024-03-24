@@ -30,7 +30,7 @@ class PreProcessor:
     def replace(self, value, method, regex):
         self.data_frame.replace(value, method=method, regex=regex, inplace=True)
 
-    def merge(self, other, left_on, right_on,how):
+    def merge(self, other, left_on, right_on, how):
         self.data_frame = pd.merge(left=self.data_frame, right=other, left_on=left_on, right_on=right_on, how=how)
 
     def group_by(self, group_column, columns_agg):
@@ -49,6 +49,7 @@ class PreProcessor:
             data = self.data_frame.loc[:, columns]
             data = (data - data.mean(axis=0)) / data.std(axis=0)
             self.data_frame.loc[:, columns] = data
+        print('normalizing_is_done')
 
     def one_hot_encoder(self, columns=None):
         encoder = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
@@ -59,19 +60,23 @@ class PreProcessor:
         encoded_df = pd.DataFrame(one_hot_encoded, columns=encoder.get_feature_names_out())
         encoded_df.index = self.data_frame.index
         self.data_frame = pd.concat([self.data_frame.drop(columns, axis=1), encoded_df], axis=1)
+        print('one hot encoding is done')
 
 
 class FeatureSelection:
     def __init__(self, data_frame):
         self.data_frame = data_frame
 
+    # Add log features for special columns
     def add_log_transform(self, columns):
         for col in columns:
             self.data_frame[f'log_{col}'] = np.log1p(self.data_frame[col])
+        print('log transform is done')
 
-    def extend_data_by_hdbscan(self, columns, eps=0.5, min_samples=5, metric='euclidean', p=None):
-        data = self.data_frame.loc[:, columns]
-        self.data_frame['hdbscan_cluster'] = HDBSCAN(min_samples=min_samples, metric=metric).fit(data).labels_
+    def extend_data_by_hdbscan(self, features,  min_samples=5, metric='euclidean'):
+        data = self.data_frame.loc[:, features]
+        self.data_frame['hdbscan_cluster'] = (HDBSCAN(min_samples=min_samples, metric=metric)
+                                              .fit(data).labels_)
 
     def reduction_dimension_by_pca(self, scaled_columns, handel='return', index=''):
         # Reduce dimensionality using PCA
@@ -90,6 +95,7 @@ class FeatureSelection:
         else:
             # Return PCA features only
             self.data_frame = pca_features
+        print('pca is done')
 
     def extend_data_by_k_means(self, features, numbers_of_cluster):
         # Apply KMeans clustering and extend dataframe with cluster information
@@ -104,29 +110,21 @@ class FeatureSelection:
             k_means_scores.append([k_means, score, y])
         k_means_scores = sorted(k_means_scores, key=lambda x: x[1], reverse=True)
         k_means = k_means_scores.pop()
-        self.data_frame["cluster"] = k_means[2]
+        self.data_frame["kmeans_cluster"] = k_means[2]
 
     def calculate_mutual_inf_class(self, target, number_of_features):
         # Calculate and return mutual information scores for features
-        features = self.data_frame.copy()
-        features.reset_index(inplace=True, drop=True)
-        object_columns = features.select_dtypes(include='object')
-        features.drop(columns=object_columns, inplace=True)
-        discrete_features = features.select_dtypes(include='number')
+        print('mutual_calculating start')
+        discrete_features = self.data_frame.select_dtypes(include='number')
         mi_scores = mutual_info_classif(y=target, X=discrete_features)
-        mi_scores = pd.Series(mi_scores, name="MI Scores", index=features.columns)
+        print('mutual_calculating end')
+        mi_scores = pd.Series(mi_scores, name="MI Scores", index=discrete_features.columns)
         mi_scores = mi_scores.sort_values(ascending=False)
         return mi_scores[:number_of_features]
 
     def calculate_mutual_inf_regression(self, target, number_of_features):
-        features = self.data_frame.copy()
-        features.reset_index(inplace=True, drop=True)
-        object_columns = features.select_dtypes(include='object')
-        features.drop(columns=object_columns, inplace=True)
-        continues_features = features.select_dtypes(include='number')
+        continues_features = self.data_frame.select_dtypes(include='number')
         mi_scores = mutual_info_regression(y=target, X=continues_features)
-        mi_scores = pd.Series(mi_scores, name="MI Scores", index=features.columns)
+        mi_scores = pd.Series(mi_scores, name="MI Scores", index=continues_features.columns)
         mi_scores = mi_scores.sort_values(ascending=False)
         return mi_scores[:number_of_features]
-
-
