@@ -12,11 +12,7 @@ This project encompasses a sophisticated recommender system designed to predict 
 - [Features](#features)
 - [Dependencies](#dependencies)
 - [Configuration](#configuration)
-- [Documentation](#documentation)
-- [Examples](#examples)
-- [Troubleshooting](#troubleshooting)
-- [Contributors](#contributors)
-- [License](#license)
+
 
 ## Installation
 
@@ -32,7 +28,20 @@ cd movie-profitability-recommender-system
 pip install -r requirements.txt
 
 # Usage
+Before every thing please run the reformat_data.py
+
+And remember the project need run celery
+
 To run the EDA dashboard and the machine learning dashboard, follow these steps:
+```bash
+python reformat_data.py
+```
+After reformat  data
+run celery 
+```bash
+celery -A tasks  beat --loglevel INFO
+```
+After this run the main.ipynb
 ```bash
 main.ipynb
 ```
