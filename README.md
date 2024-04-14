@@ -45,7 +45,7 @@ After this run the main.ipynb
 ```bash
 main.ipynb
 ```
-Open your web browser and go to http://127.0.0.1:8050/.
+Open your web browser and go to http://127.0.0.1:8080/.
 
 Here, you can interact with the EDA dashboard, select features for the machine learning model, and view the performance (F1 score, accuracy, recall, precision) of each model via a bar chart.
 
