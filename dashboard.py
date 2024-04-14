@@ -19,11 +19,30 @@ class DashboardLayout:
             dcc.Tabs([
                 dcc.Tab([
                     dbc.Row([
+                        dbc.Col([html.Br(), dcc.Markdown('''
+            # Description 
+            The below chart is a bar chart which give you ability to compare the items in the drop down of 
+            the category which you chose , and from right dropdown you can choose for example name of
+            directors and from left dropdown you can choose numerical feature which you want to compare 
+            int the bar chart
+            ''')])]),
+                    dbc.Row([
                         dbc.Col([html.Br(), html.H1('Movie Recommendations', style={'font-size': '20px'})]),
                         dbc.Col([html.Br(), dcc.RadioItems(id="movie-radio-items", options=['Cast', 'Director', 'Genre',
                                                                                             'Producer_Company'],
                                                            value='Director',
                                                            inline=True, className='dbc')])]),
+                    dbc.Row([
+                        dbc.Col([html.Br(), dcc.Markdown('''
+            # Description 
+            The below chart is a bar chart which give you ability to compare the items in the drop down of 
+            the category which you chose , and from right dropdown you can choose for example name of
+            directors and from left dropdown you can choose numerical feature which you want to compare 
+            int the bar chart
+            ''')])
+
+                    ]),
+
                     dbc.Row(
                         [
                             dbc.Col([html.Br(), dcc.Dropdown(id='movie-dropdown', className='dbc', multi=True,
@@ -37,6 +56,13 @@ class DashboardLayout:
                         ]
                     ),
                     dbc.Row(dbc.Col([html.Br(), dcc.Graph(id='bar-chart')])),
+                    dbc.Row(dbc.Col([html.Br(), dcc.Markdown(
+                        '''
+                        # Description 
+                        The below chart is a histogram which make you visible to see data from every entity which comes 
+                        from every chosen category in a specific data which you can choose from data picker item 
+                        '''
+                    )])),
                     dbc.Row(
                         [
                             dbc.Col([html.Br(), dcc.Dropdown(id='radio-dropdown')]),
@@ -77,17 +103,30 @@ class DashboardLayout:
                                                                         Darkmint))])
                         ]
                     ),
-                    dbc.Row(
-                        [dbc.Col(
+                    dbc.Row([
+                        dbc.Col([html.Br(), dcc.Markdown('''
+        # Description 
+        The follow heat map is a heat map for correlation between each numerical data columns in data
+        and you can choose the metric from radio items for calculate the correlation  
+        ''')])]),
+                    dbc.Row([
+                        dbc.Col(
                             [
                                 html.Br(),
                                 dcc.RadioItems(id='Radio-heat-map', options=['pearson', 'kendall', 'spearman'],
                                                value='pearson')
                             ]
                         ),
-                            dbc.Col([html.Br(), dcc.Graph(id='heat-map')])
+                        dbc.Col([html.Br(), dcc.Graph(id='heat-map')])
                         ]
                     ),
+                    dbc.Row([
+                        dbc.Col([html.Br(), dcc.Markdown('''
+                        # Description 
+                        The bellow map is can be use for see distribution of every items in the following dropdown,
+                        int the each country
+                        ''')])
+                    ]),
                     dbc.Row([
                         dbc.Col([html.Br(), dcc.Dropdown(id='map-dropdown', options=['budget', 'popularity',
                                                                                      'vote_average', 'runtime',
@@ -107,6 +146,15 @@ class DashboardLayout:
                 ], label='EDA_Dashboard'),
                 dcc.Tab(
                     [
+                        dbc.Row([
+                            dbc.Col([html.Br(), dcc.Markdown('''
+                            # Description 
+                            In the following dashboard you can choose some items  as feature for re learning models
+                            like numerical columns to convert to log of them or some categorical columns for 
+                            one hot encoding after that you can compare the result metrics for each model in the
+                            bar chart and we set a default result for this
+                            ''')])
+                        ]),
                         dbc.Row([
                             dbc.Col([html.Br(), html.H3('select columns for log ')]),
                             dbc.Col([html.Br(), html.H3('select columns for one hot encoding')])
@@ -141,6 +189,15 @@ class DashboardLayout:
                                      dbc.Col([html.Br(), dcc.Graph(id='Ml-barchart')])
                                      ])
                         ]
+                        ),
+                        dbc.Row(
+                          dbc.Col([html.Br(), dcc.Markdown(
+                              ''' 
+                              # Description
+                              You can enter the name of movie which you want in the follow blank then get the 
+                              recommends   
+                              ''')])
+
                         ),
                         dbc.Row(
                             [

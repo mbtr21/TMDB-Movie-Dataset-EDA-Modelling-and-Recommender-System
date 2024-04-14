@@ -39,7 +39,9 @@ def similarity(data_frame, title):
     cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 
     # Create a Series from the DataFrame indices with the movie title as the index (key).
-    indices = pd.Series(data_frame.index, index=data_frame['original_title']).drop_duplicates()
+    indices = pd.Series(data_frame.index, index=data_frame['title']).drop_duplicates()
+
 
     # Return the top 10 most similar movies for the given title.
     return get_recommendations(data_frame=data_frame, title=title, cosine_similarity=cosine_sim, indices=indices)
+

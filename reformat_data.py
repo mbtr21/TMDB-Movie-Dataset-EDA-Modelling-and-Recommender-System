@@ -69,11 +69,13 @@ class ReformatMovie:
     # Converts production country JSON data into a pandas DataFrame with specified column names.
     def convert_country_to_data_frame(self):
         for movie_id, row in self.data_frame.iterrows():
-            country_list = pd.read_json(row['production_countries'])  # Parse JSON data from 'production_countries' column.
+            country_list = pd.read_json(row['production_countries'])
+            # Parse JSON data from 'production_countries' column.
             for country_member in country_list.to_dict(orient='records'):
                 country_member['movie_id'] = movie_id  # Add movie ID to each country record.
                 self.temp.append(country_member)
-        country_df = pd.DataFrame(self.temp).rename(columns={'name': 'Country', 'iso_3166_1': 'iso'})  # Create and rename DataFrame.
+        country_df = pd.DataFrame(self.temp).rename(columns={'name': 'Country', 'iso_3166_1': 'iso'})
+        # Create and rename DataFrame.
         self.temp = list()  # Clear the temporary list for future use.
         return country_df
 
@@ -128,10 +130,12 @@ class ReformatMovie:
         genres = self.convert_genre_to_data_frame()
         # Lines for converting keywords and spoken languages are commented out, indicating optional processing steps.
         self.data_frame.drop(columns=['production_companies', 'production_countries', 'genres', 'homepage',
-                                      'title', 'tagline', 'spoken_languages', 'original_language',
-                                      'keywords', 'original_title', 'overview'], inplace=True)  # Drop specified columns from the main DataFrame.
+                                      'tagline', 'spoken_languages', 'original_language',
+                                      'keywords', 'original_title'], inplace=True)
+        # Drop specified columns from the main DataFrame.
         data_frame = pd.merge(left=companies, right=countries, how='inner', on='movie_id')
-        data_frame = pd.merge(left=data_frame, right=genres, how='inner', on='movie_id').rename(columns={'movie_id': 'id'})
+        data_frame = (pd.merge(left=data_frame, right=genres, how='inner', on='movie_id')
+                      .rename(columns={'movie_id': 'id'}))
         # Merge the transformed data with the main DataFrame on 'id', completing the restructuring.
         self.data_frame = pd.merge(left=data_frame, right=self.data_frame, how='inner', on='id')
 
